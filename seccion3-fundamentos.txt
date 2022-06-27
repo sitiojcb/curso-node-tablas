@@ -1,0 +1,218 @@
+03 - Bases de node 
+
+Temas de la sección:
+
+La sección se enfoca en los siguientes temas:
+
+1)Requerir información de otros archivos
+2)Requerir paquetes
+3)Importar archivos personalizados
+4)NPM
+    Install
+    Uninstall
+    Package.json
+5)Yargs
+6)Recibir parámetros por línea de comando
+7)Colores para la consola
+--------------------------------
+pregunta 
+diferencia entre require y import
+resp:
+Import es el nuevo estándar para las importaciones de ES6, mientras que require es el método anterior. 
+Por ahora require sigue siendo estable, de a poco creemos que se comenzara a usar solo imports a futuro.
+
+Para usar import en lugar de require 
+Puedes definir que trabajaras con modules de ES6 en package.json y utilizar import. 
+Adicionalmente, puedes usar babel sin problema.
+
+Hay que añadir a tu archivo package.json las siguientes lineas:
+
+    {
+      "type": "module"
+    }
+
+https://nodejs.org/api/packages.html#packages_type
+
+Por defecto, Nodejs trata el código javascript como módulos CommonJS, con estas lineas indicas que tu código JavaScript utiliza módulos de ECMAScript.
+
+-----------------------------
+comenta que en el navegador web no tenemos acceso directo al filesystem. pero si en node
+
+https://nodejs.org/dist/latest-v16.x/docs/api/fs.html
+
+tengo instalado n v14.17
+
+filesystem (todas las carpetas y archivos de mi servidor )
+
+cuando vemos la documentacion, prestar atencion a donde dice deprecated , significa que pronto deja de correr 
+
+------------------write file 
+https://nodejs.org/dist/latest-v16.x/docs/api/fs.html#fswritefilefile-data-options-callback
+
+ejemplo:
+import { writeFile } from 'fs';
+import { Buffer } from 'buffer';
+
+const data = new Uint8Array(Buffer.from('Hello Node.js'));
+writeFile('message.txt', data, (err) => {
+  if (err) throw err;//muestra en consola y no sigue
+  console.log('The file has been saved!');
+});
+----------------------
+video 31 importar archivos 
+
+para ordenarnos conviene dividir y luego importar partes que necesito 
+creo carpeta helpers/multiplicar.js 
+
+propone ejercicio en donde pueda visualizar que el proceso se hizo correctamente 
+debemos transformar el archivo multiplicar en una promesa 
+
+
+vemos que el ej lo resuelve con asyn sin usar await...
+resp:
+El async transforma la respuesta de la función en una promesa... pero si la función ya retorna una promesa, usará esa.
+---------------------------
+video 32 recibir info desde linea de comandos 
+
+console.log(process.argv);
+vemos devuelve
+donde esta instalado node y luego donde es que se ejecuta 
+[
+  '/home/cali/.nvm/versions/node/v14.17.5/bin/node',
+  '/media/cali/datosNTFS/Mega-Sites/Sites-Javascript/node-fh/03-bases-node/app.js'
+]
+vemos tambien que si en el terminal coloco 
+node app.js --num=5
+devuelve ademas de lo anterior base=5 es decir es un tercer agumento. 
+Propone captar ese tercer argumento 
+
+const [, , arg3 = "num=5"] = process.argv;
+es decir por defecto le digo va a ser 5 
+porque sino puede pasar que me olvide de pasar el comando en el terminal y me da undefined 
+
+con split por el = obtengo dos elementos el num = y el 5
+por eso con 
+const [, num] = arg3.split("=");
+desestructuro el segundo elemento que es lo que vamos a pasar por linea de comandos 
+
+comenta que todo eso lo hace para mostrar como funciona node pero para trabajar existen paquetes que resuelven estos problemas.
+
+-------------------------------------------
+video 33 package.json install/uninstall 
+
+para poder instalar paquetes usamos 
+node package manager npm 
+
+conviene usar paquetes que sean muy usados 
+ej
+https://www.npmjs.com/package/colors
+npm i colors 
+
+npm init 
+vemos como crear un comando especial por ej base3
+agrega debajo de test 
+"base3": "node app.js --num=3"
+luego en terminal usa: node run base3 
+
+las dependencias son los paquetes necesarios para que nuestra app funcione 
+
+cuando queremos instalar algo que nos sirve solo para desarrollo pero no para la parte final entonces agregamos 
+npm i paquete --save-dev 
+por ej npm install nodemon --save-dev 
+
+luego si quiero deshinstalar : npm uninstall nodemon 
+
+para instalar un paquete con una version en particular 
+npm i colors@1.0.2 
+
+tambien podemos actualizar paquetes corriendo: 
+npm update 
+chequea si de lo que tengo instalado existen actualizaciones y las hace pero puede dar conflicto 
+
+---------------------------
+video 34 yargs 
+
+https://www.npmjs.com/package/yargs
+
+npm i yargs 
+
+console.log(process.argv);
+console.log(argv);
+
+[
+  '/home/cali/.nvm/versions/node/v14.17.5/bin/node',
+  '/media/cali/datosNTFS/Mega-Sites/Sites-Javascript/node-fh/03-bases-node/app.js'
+]
+{ _: [], '$0': 'app.js' }
+
+pero si en el terminal paso: node app.js --num=5 
+[
+  '/home/cali/.nvm/versions/node/v14.17.5/bin/node',
+  '/media/cali/datosNTFS/Mega-Sites/Sites-Javascript/node-fh/03-bases-node/app.js',
+  '--num=5'
+]
+{ _: [], num: 5, '$0': 'app.js' }
+
+
+esto demuestra que yargs es mas eficiente nos ahorramos hacer el split ...
+
+podemos hacer node app --help 
+y ahora gracias a yargs nos da info de todos los comandos que se pueden ejecutar en nuestra app 
+
+o bien node app -v 
+vemos la version de nuestro package.json 
+
+para ver la documentacion de yarg 
+https://yargs.js.org/
+
+----------------------------------------
+video 35 configuracion de yargs 
+
+https://yargs.js.org/docs/#api-reference-optionkey-opt
+
+
+si intento node app -n=algo me sale el error 
+la base debe ser un numero 
+
+ej: debo crear alias listar l boolean optional false que por default va a ser false
+
+en caso de que listar sea true imprime la salida sino no 
+se muestra la tabla en la consola 
+
+--------------------------------------
+video 36 configuracion yargs independiente 
+
+comenta que nuestro app.js debe de estar lo mas limpio posible,
+creamos config/yargs.js 
+
+-----------------------------------------
+video 37 colores en consola 
+!! ojo parece hay problemas con esta libreria
+para evitarlo usar 
+Exacto, miestras tanto pueden instaladar el paquete en una version anterios con npm install colors@1.4.0
+
+var colors = require('colors');
+ 
+console.log('hello'.green); // outputs green text
+console.log('i like cake and pies'.underline.red) // outputs red underlined text
+console.log('inverse the color'.inverse); // inverses the color
+console.log('OMG Rainbows!'.rainbow); // rainbow
+console.log('Run the trap'.trap); // Drops the bass
+
+-----------------------------------
+video 38 tarea 
+hacer que la tabla llegue hasta x 
+agregar comando -h o --hasta 
+
+ver como corrige el error de los colores usando primero la salida limpia y agregando en segunda instancia en consola 
+
+-------------------------------------
+video 39 git repo 
+
+creamos folder salida para que cuando creemos archivos los coloque ahi 
+
+-----------
+.gitignore 
+luego inicializamos git con: git init 
+
+luego git add .
