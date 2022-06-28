@@ -216,3 +216,119 @@ creamos folder salida para que cuando creemos archivos los coloque ahi
 luego inicializamos git con: git init 
 
 luego git add .
+si nos equivocamos en subir un archivo puedo dar marcha atras usando:
+(use "git rm --cached <file>..." to unstage)
+
+luego agregamos mensaje:
+git commit -m "primer commit"
+
+hasta ahora lo tengo respaldado en local
+supongamos se nos borro la carpeta helpers la podemos recuperar con 
+git checkout -- .
+o bien se nos modifico sin querer un archivo con este comando recupero como estaba 
+
+pregunta:
+enseñas a inicializar git y un repositorio pero cuando creo el archivo .gitignore y agrego las carpetas de node_modules y salida aun así me aparecen en verde y en git status me salen disponibles para agregarlas.
+
+resp: git rm --cached -r .
+
+-------------------------------
+video 40 respaldo con github 
+
+creo repo publico curso-node-tablas
+
+https://github.com/sitiojcb/curso-node-tablas
+
+echo "# curso-node-tablas" >> README.md
+git init              ya lo hicimos
+git add README.md
+git commit -m "first commit"
+git branch -M main   ver que aconsejan usar Main en lugar de master
+git remote add origin git@github.com:sitiojcb/curso-node-tablas.git
+git push -u origin main
+
+-------pero vemos que abjo nos da 
+or push an existing repo 
+
+git remote add origin git@github.com:sitiojcb/curso-node-tablas.git
+git branch -M main
+git push -u origin main
+
+
+----da error de permisos 
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+intento 
+git remote set-url origin git@github.com:sitiojcb/curso-node-tablas.git
+
+sigue dando error 
+
+For Windows you can find the keys here:
+
+control panel > user accounts > credential manager > Windows credentials > Generic credentials
+
+Next remove the Github keys.
+
+--------youtube
+dos soluciones: 1 usar https 
+git clone https:...
+pregunta username y passw
+
+pero sugieren usar 2 ssh 
+creamos ssh key con: ssh-keygen 
+si dejo como sugiere se crea /home/cali/.ssh/id_rsa 
+
+luego usa cat /home/cali/.ssh/id_rsa.pub
+de manera que lo copia y va a github -> settings -> ssh 
+le da un titulo y lo pega 
+
+pero mi problema es que lo tengo en otra ruta!!
+en mi caso lo tengo en 
+/home/cali/.ssh/git/id_rsa_git.pub
+
+sugieren usar: ssh-add ~/.ssh/id_ed25519
+
+ssh-add ~/.ssh/git/id_rsa_git.pub
+
+ No debería ser necesario que ejecutes ssh-add path/to/key a menos que anules el nombre del archivo cuando generes una llave.
+
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0644 for '/home/cali/.ssh/git/id_rsa_git.pub' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+
+entonces cambio permisos con:
+chmod 600 id_rsa_git.pub
+
+-----------------------------
+
+comentario: si te indica que ya existe,
+
+podrias eliminarlo primero
+
+    git remote rm origin 
+
+podrias ver el nombre con
+
+    git remote -vx
+-----------------------------------
+Al parecer las credenciales de git se han guardado en su equipo y genera el error, por favor ejecuta:
+
+    git remote set-url origin git@github.com:xavi-develop/<resto de la ruta>.git
+
+https://www.freecodecamp.org/forum/t/need-your-help-with-github-permission-denied-to-my-own-repo/17421/12
+
+También te puede ayudar:
+
+https://stackoverflow.com/questions/47465644/github-remote-permission-denied
+
+
+Para asegurarte de que te estás conectando al dominio correcto, puedes ingresar el siguiente comando:
+ssh -vT git@github.com
+
+--------El error era porque queria usar 
+ssh-add pub en lugar del privado !! 
+
+---------------------------
